@@ -1,0 +1,169 @@
+<div class="marginTop2"><img src="assets/logo.png" class="logo"></div>
+<div class="scannerContainer" *ngIf="mode === 'qrScanning'">
+  <button mat-flat-button color="primary" class="stopScan" (click)="mode = 'stepper'">Cancel</button>
+  <zxing-scanner class="scanner"
+                 (scanSuccess)="scanSuccessHandler($event)"
+                 (scanError)="scanErrorHandler($event)"
+                 (scanFailure)="scanFailureHandler($event)"
+                 (scanComplete)="scanCompleteHandler($event)"></zxing-scanner>
+</div>
+<div class="cameraContainer" *ngIf="mode === 'camera'">
+  <webcam class="camera" [trigger]="triggerObservable" (imageCapture)="imageCapture($event)"></webcam>
+  <div class="buttons flexLayout flexJustifyCenter">
+    <button mat-flat-button color="primary" (click)="mode = 'stepper'">Cancel</button>
+    <button mat-flat-button color="primary" class="marginLeft1" (click)="snapshot()">
+      <div class="flexLayout flexJustifyCenter">
+        <mat-icon style="font-size: 18px;height:18px;width:18px;">add_a_photo</mat-icon>
+      </div>
+    </button>
+    <button mat-flat-button color="primary" class="marginLeft1" (click)="mode = 'stepper'">
+      <div class="flexLayout flexJustifyCenter">
+        <mat-icon style="font-size: 18px;height:18px;width:18px;">autorenew</mat-icon>
+      </div>
+    </button>
+  </div>
+</div>
+<mat-vertical-stepper [linear]="false" #stepper [animationDuration]="'1000'" *ngIf="mode === 'stepper'">
+  <ng-template matStepperIcon="number" let-index="index">
+    <mat-icon *ngIf="index === 0">photo_camera</mat-icon>
+    <mat-icon *ngIf="index === 1">qr_code_2</mat-icon>
+    <mat-icon *ngIf="index === 2">view_list</mat-icon>
+    <mat-icon *ngIf="index === 3">cloud_upload</mat-icon>
+    <mat-icon *ngIf="index === 4">check_circle</mat-icon>
+  </ng-template>
+  <ng-template matStepperIcon="edit" let-index="index">
+    <mat-icon *ngIf="index === 0">edit</mat-icon>
+    <mat-icon *ngIf="index === 1">edit</mat-icon>
+    <mat-icon *ngIf="index === 2">edit</mat-icon>
+    <mat-icon *ngIf="index === 3">edit</mat-icon>
+    <mat-icon *ngIf="index === 4">edit</mat-icon>
+  </ng-template>
+  <ng-template matStepperIcon="done" let-index="index">
+    <mat-icon *ngIf="index === 0">check_circle</mat-icon>
+    <mat-icon *ngIf="index === 1">check_circle</mat-icon>
+    <mat-icon *ngIf="index === 2">check_circle</mat-icon>
+    <mat-icon *ngIf="index === 3">check_circle</mat-icon>
+    <mat-icon *ngIf="index === 4">check_circle</mat-icon>
+  </ng-template>
+  <mat-step [completed]="component.lastImage !== null">
+      <ng-template matStepLabel>Take a photo of the component</ng-template>
+      <div *ngIf="!component.lastImage" class="message">No photo taken yet.</div>
+      <div *ngIf="component.lastImage" class="photo"><img [src]="component.lastImage"></div>
+      <div class="marginTop2">
+        <button mat-flat-button color="primary"
+                (click)="mode = 'camera'">{{component.lastImage ? 'Retake Photo' : 'Take Photo'}}</button>
+        <button mat-flat-button matStepperNext>Next</button>
+      </div>
+  </mat-step>
+  <mat-step [completed]="component.uuid !== null">
+      <ng-template matStepLabel>Scan attached QR code</ng-template>
+      <div *ngIf="!component.uuid" class="message">No QR code scanned yet.</div>
+      <div *ngIf="component.uuid" class="uuid">{{component.uuid}}</div>
+      <div class="marginTop2">
+        <button mat-flat-button matStepperPrevious>Back</button>
+        <button mat-flat-button color="primary"
+                (click)="mode = 'qrScanning'">{{component.uuid ? 'Rescan Barcode' : 'Scan Barcode'}}</button>
+        <button mat-flat-button matStepperNext>Next</button>
+      </div>
+  </mat-step>
+  <mat-step class="fullWidth">
+      <ng-template matStepLabel>Add component properties</ng-template>
+      <mat-form-field class="fullWidth">
+        <mat-label>Type</mat-label>
+        <mat-select [(ngModel)]="component.type">
+          <mat-option value="Column">Column</mat-option>
+          <mat-option value="Wall">Wall</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="fullWidth">
+        <input matInput placeholder="Address" [(ngModel)]="component.address" required>
+      </mat-form-field>
+      <mat-form-field class="fullWidth">
+        <mat-label>Manufacturing Year</mat-label>
+        <mat-select [(ngModel)]="component.manufacturingYear">
+          <mat-option value="1965">1965</mat-option>
+          <mat-option value="1966">1966</mat-option>
+          <mat-option value="1967">1967</mat-option>
+          <mat-option value="1968">1968</mat-option>
+          <mat-option value="1969">1969</mat-option>
+          <mat-option value="1970">1970</mat-option>
+          <mat-option value="1971">1971</mat-option>
+          <mat-option value="1972">1972</mat-option>
+          <mat-option value="1973">1973</mat-option>
+          <mat-option value="1974">1974</mat-option>
+          <mat-option value="1976">1976</mat-option>
+          <mat-option value="1977">1977</mat-option>
+          <mat-option value="1978">1978</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="fullWidth">
+        <mat-label>Accessibility</mat-label>
+        <mat-select>
+          <mat-option value="cast">Not Applicable</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="fullWidth">
+        <mat-label>Fixture</mat-label>
+        <mat-select>
+          <mat-option value="Cast">Cast</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="toggleField">
+        <span class="label">Pollutants</span>
+        <div class="slideToggle">
+          <mat-slide-toggle [(ngModel)]="component.pollutants"></mat-slide-toggle>
+        </div>
+      </div>
+      <div class="toggleField">
+        <span class="label">Fissures</span>
+        <div class="slideToggle">
+          <mat-slide-toggle [(ngModel)]="component.fissures"></mat-slide-toggle>
+        </div>
+      </div>
+      <div class="toggleField">
+        <span class="label">Spallants</span>
+        <div class="slideToggle">
+          <mat-slide-toggle [(ngModel)]="component.spallants"></mat-slide-toggle>
+        </div>
+      </div>
+      <div class="toggleField">
+        <span class="label">Corrosion</span>
+        <div class="slideToggle">
+          <mat-slide-toggle [(ngModel)]="component.corrosion"></mat-slide-toggle>
+        </div>
+      </div>
+      <div class="marginTop2">
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+  </mat-step>
+  <mat-step class="fullWidth">
+      <ng-template matStepLabel>Submit component data</ng-template>
+      <div class="summary">
+        <div class="photo"><img [src]="component.lastImage"></div>
+        <div class="uuid">{{component.uuid}}</div>
+        <div>
+          <span class="label">Type:&nbsp;</span><span class="value">{{component.type}},&nbsp;</span>
+          <span class="label">Address: </span><span class="value">{{component.address}},&nbsp;</span>
+          <span class="label">Manufacturing&nbsp;Year: </span><span class="value">{{component.manufacturingYear}}, </span>
+          <span class="label">Fixture: </span><span class="value">{{component.fixture}},&nbsp;</span>
+          <span class="label">Pollutants: </span><span class="value">{{component.pollutants ? '&#x2713;' : '-'}}, </span>
+          <span class="label">Fissures: </span><span class="value">{{component.fissures ? '&#x2713;' : '-'}}, </span>
+          <span class="label">Spallants: </span><span class="value">{{component.spallants ? '&#x2713;' : '-'}}, </span>
+          <span class="label">Corrosion: </span><span class="value">{{component.corrosion ? '&#x2713;' : '-'}}, </span>
+        </div>
+      </div>
+      <div class="marginTop2">
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Submit</button>
+      </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <div class="message">Data for component <span class="bold">{{component.uuid}}</span> were successfully submitted to the PCC 2.0 data store.</div>
+    <div class="marginTop2">
+      <button mat-button matStepperPrevious>New</button>
+      <button mat-button (click)="stepper.reset()">Done</button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper>
