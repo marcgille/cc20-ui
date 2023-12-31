@@ -1,4 +1,4 @@
-# UI for Component registration in Concrete Components (CC20)
+# UI for Component Registration in Concrete Components (CC20)
 
 ## Background
 
@@ -6,6 +6,24 @@ This project contains Angular components for the registration process of concret
 
 The code was created as part of the research project "Fertigteil 2.0 - Real-digitale Prozessketten zur Gewinnung von eingebauten Betonbauteilen
 für die Weiterverwendung als fertige Bauteile" (033R255) funded bei the Bundesministerium für Bildung und Forschung, Bundesrepublik Deutschland.
+
+## Screenshots
+
+### Photo
+
+![Alt text](photo.png)
+
+### QR Code Scan
+
+![Alt text](qr.png)
+
+### Component Properties
+
+![Alt text](properties.png)
+
+### Submit
+
+![Alt text](submit.png)
 
 ## Development and Build
 
